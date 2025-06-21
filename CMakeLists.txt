@@ -21,10 +21,10 @@ find_package(OpenGL REQUIRED)
 # Add source files
 add_executable(${PROJECT_NAME} 
     src/main.cpp
-    src/TestShader.cpp
-    src/TestObjModel.cpp  # Using TestObjModel for OBJ loading
-    src/TestCamera.cpp
-    # src/TestModel.cpp  # Commented out, not used for OBJ test
+    src/Shader.cpp
+    src/ObjModel.cpp  # Using ObjModel for OBJ loading
+    src/Camera.cpp
+    # src/Model.cpp  # Commented out, not used for OBJ test
 )
 
 add_library(glad STATIC external/glad/gl.c)

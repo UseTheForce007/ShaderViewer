@@ -1,6 +1,6 @@
-#include "TestModel.h"
+#include "Model.h"
 
-TestModel::TestModel() {
+Model::Model() {
     float vertices[] = {
         // positions        // colors
          0.0f,  0.5f, 0.0f,  1.0f, 0.0f, 0.0f, // top (red)
@@ -20,12 +20,12 @@ TestModel::TestModel() {
     glBindVertexArray(0);
 }
 
-TestModel::~TestModel() {
+Model::~Model() {
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
 }
 
-void TestModel::draw() const {
+void Model::draw() const {
     glBindVertexArray(VAO);
     glDrawArrays(GL_TRIANGLES, 0, 3);
     glBindVertexArray(0);

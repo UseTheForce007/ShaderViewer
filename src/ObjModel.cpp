@@ -1,12 +1,12 @@
 #define TINYOBJLOADER_IMPLEMENTATION
 #include <tiny_obj_loader.h>
-#include "TestObjModel.h"
+#include "ObjModel.h"
 #include <vector>
 #include <iostream>
 #include <cfloat> // for FLT_MAX
 #include <algorithm> // for std::min/std::max
 
-TestObjModel::TestObjModel(const std::string& path) {
+ObjModel::ObjModel(const std::string& path) {
     tinyobj::attrib_t attrib;
     std::vector<tinyobj::shape_t> shapes;
     std::vector<tinyobj::material_t> materials;
@@ -76,12 +76,12 @@ TestObjModel::TestObjModel(const std::string& path) {
     glBindVertexArray(0);
 }
 
-TestObjModel::~TestObjModel() {
+ObjModel::~ObjModel() {
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
 }
 
-void TestObjModel::draw() const {
+void ObjModel::draw() const {
     glBindVertexArray(VAO);
     glDrawArrays(GL_TRIANGLES, 0, vertexCount);
     glBindVertexArray(0);

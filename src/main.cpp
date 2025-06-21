@@ -3,9 +3,9 @@
 #include <iostream>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include "TestShader.h"
-#include "TestObjModel.h"
-#include "TestCamera.h"
+#include "Shader.h"
+#include "ObjModel.h"
+#include "Camera.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
@@ -45,9 +45,9 @@ int main() {
     std::cout << "OpenGL version: " << glGetString(GL_VERSION) << std::endl;
 
     // Step 5: Create test shader, model, and camera
-    TestShader shader("shaders/default.vert", "shaders/default.frag");
-    TestObjModel model("assets/suzanne.obj");
-    TestCamera camera;
+    Shader shader("shaders/default.vert", "shaders/default.frag");
+    ObjModel model("assets/suzanne.obj");
+    Camera camera;
 
     // Step 6: Main loop
     while (!glfwWindowShouldClose(window)) {

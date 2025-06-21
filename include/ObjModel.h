@@ -2,10 +2,10 @@
 #include <string>
 #include <glad/gl.h>
 
-class TestObjModel {
+class ObjModel {
 public:
-    TestObjModel(const std::string& path);
-    ~TestObjModel();
+    ObjModel(const std::string& path);
+    ~ObjModel();
     void draw() const;
 private:
     GLuint VAO = 0, VBO = 0;

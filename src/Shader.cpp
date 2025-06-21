@@ -1,9 +1,9 @@
-#include "TestShader.h"
+#include "Shader.h"
 #include <fstream>
 #include <sstream>
 #include <iostream>
 
-TestShader::TestShader(const std::string& vertexPath, const std::string& fragmentPath) {
+Shader::Shader(const std::string& vertexPath, const std::string& fragmentPath) {
     std::ifstream vFile(vertexPath), fFile(fragmentPath);
     std::stringstream vStream, fStream;
     vStream << vFile.rdbuf();
@@ -48,18 +48,18 @@ TestShader::TestShader(const std::string& vertexPath, const std::string& fragmen
     glDeleteShader(fragment);
 }
 
-TestShader::~TestShader() {
+Shader::~Shader() {
     glDeleteProgram(ID);
 }
 
-void TestShader::use() const {
+void Shader::use() const {
     glUseProgram(ID);
 }
 
-void TestShader::setMat4(const std::string& name, const float* value) const {
+void Shader::setMat4(const std::string& name, const float* value) const {
     glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, value);
 }
 
-void TestShader::setFloat(const std::string& name, float value) const {
+void Shader::setFloat(const std::string& name, float value) const {
     glUniform1f(glGetUniformLocation(ID, name.c_str()), value);
 }

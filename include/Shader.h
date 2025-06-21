@@ -2,11 +2,11 @@
 #include <string>
 #include <glad/gl.h>
 
-class TestShader {
+class Shader {
 public:
     GLuint ID;
-    TestShader(const std::string& vertexPath, const std::string& fragmentPath);
-    ~TestShader();
+    Shader(const std::string& vertexPath, const std::string& fragmentPath);
+    ~Shader();
     void use() const;
     void setMat4(const std::string& name, const float* value) const;
     void setFloat(const std::string& name, float value) const;
