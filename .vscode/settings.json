@@ -87,6 +87,9 @@
         "memory_resource": "cpp",
         "string_view": "cpp",
         "cinttypes": "cpp",
-        "text_encoding": "cpp"
+        "text_encoding": "cpp",
+        
+        "C_Cpp.configurationProvider": "ms-vscode.cmake-tools", //Added to fix Intellisense issue
+        "C_Cpp.intelliSenseEngine": "Default"                   //
     }
 }
