@@ -1,3 +1,0 @@
-C:\msys64\mingw64\bin\cmake.exe -E rm -f CMakeFiles\ShaderViewer.dir/objects.a
-C:\msys64\mingw64\bin\ar.exe qc CMakeFiles\ShaderViewer.dir/objects.a @CMakeFiles\ShaderViewer.dir\objects1.rsp
-C:\msys64\mingw64\bin\g++.exe  -Wall -Wextra -g -Wl,--whole-archive CMakeFiles\ShaderViewer.dir/objects.a -Wl,--no-whole-archive -o ShaderViewer.exe -Wl,--out-implib,libShaderViewer.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\ShaderViewer.dir\linkLibs.rsp

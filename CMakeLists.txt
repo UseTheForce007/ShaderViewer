@@ -21,9 +21,6 @@ find_package(OpenGL REQUIRED)
 # Add source files
 add_executable(${PROJECT_NAME} 
     src/main.cpp
-    # src/shader.cpp
-    # src/model.cpp
-    # src/camera.cpp
     src/TestShader.cpp
     src/TestObjModel.cpp  # Using TestObjModel for OBJ loading
     src/TestCamera.cpp

@@ -45,7 +45,7 @@ int main() {
     std::cout << "OpenGL version: " << glGetString(GL_VERSION) << std::endl;
 
     // Step 5: Create test shader, model, and camera
-    TestShader shader("shaders/test.vert", "shaders/test.frag");
+    TestShader shader("shaders/default.vert", "shaders/default.frag");
     TestObjModel model("assets/suzanne.obj");
     TestCamera camera;
 

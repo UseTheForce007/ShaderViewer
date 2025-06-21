@@ -1,5 +1,0 @@
-C:/Users/azzed/source/repos/ShaderViewer/build/CMakeFiles/ShaderViewer.dir
-C:/Users/azzed/source/repos/ShaderViewer/build/CMakeFiles/glad.dir
-C:/Users/azzed/source/repos/ShaderViewer/build/CMakeFiles/imgui.dir
-C:/Users/azzed/source/repos/ShaderViewer/build/CMakeFiles/edit_cache.dir
-C:/Users/azzed/source/repos/ShaderViewer/build/CMakeFiles/rebuild_cache.dir
