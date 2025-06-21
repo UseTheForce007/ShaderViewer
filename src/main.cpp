@@ -46,7 +46,7 @@ int main() {
 
     // Step 5: Create test shader, model, and camera
     TestShader shader("shaders/test.vert", "shaders/test.frag");
-    TestObjModel model("assets/tetrahedron.obj");
+    TestObjModel model("assets/suzanne.obj");
     TestCamera camera;
 
     // Step 6: Main loop
