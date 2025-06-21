@@ -1,0 +1,68 @@
+[
+{
+  "directory": "C:/Users/azzed/source/repos/ShaderViewer/build",
+  "command": "C:\\msys64\\mingw64\\bin\\gcc.exe  @CMakeFiles/glad.dir/includes_C.rsp -g -o CMakeFiles\\glad.dir\\external\\glad\\gl.c.obj -c C:\\Users\\azzed\\source\\repos\\ShaderViewer\\external\\glad\\gl.c",
+  "file": "C:/Users/azzed/source/repos/ShaderViewer/external/glad/gl.c",
+  "output": "CMakeFiles/glad.dir/external/glad/gl.c.obj"
+},
+{
+  "directory": "C:/Users/azzed/source/repos/ShaderViewer/build",
+  "command": "C:\\msys64\\mingw64\\bin\\g++.exe  @CMakeFiles/imgui.dir/includes_CXX.rsp  -Wall -Wextra -g -std=gnu++17 -o CMakeFiles\\imgui.dir\\C_\\Users\\azzed\\source\\repos\\imgui\\imgui.cpp.obj -c C:\\Users\\azzed\\source\\repos\\imgui\\imgui.cpp",
+  "file": "C:/Users/azzed/source/repos/imgui/imgui.cpp",
+  "output": "CMakeFiles/imgui.dir/C_/Users/azzed/source/repos/imgui/imgui.cpp.obj"
+},
+{
+  "directory": "C:/Users/azzed/source/repos/ShaderViewer/build",
+  "command": "C:\\msys64\\mingw64\\bin\\g++.exe  @CMakeFiles/imgui.dir/includes_CXX.rsp  -Wall -Wextra -g -std=gnu++17 -o CMakeFiles\\imgui.dir\\C_\\Users\\azzed\\source\\repos\\imgui\\imgui_draw.cpp.obj -c C:\\Users\\azzed\\source\\repos\\imgui\\imgui_draw.cpp",
+  "file": "C:/Users/azzed/source/repos/imgui/imgui_draw.cpp",
+  "output": "CMakeFiles/imgui.dir/C_/Users/azzed/source/repos/imgui/imgui_draw.cpp.obj"
+},
+{
+  "directory": "C:/Users/azzed/source/repos/ShaderViewer/build",
+  "command": "C:\\msys64\\mingw64\\bin\\g++.exe  @CMakeFiles/imgui.dir/includes_CXX.rsp  -Wall -Wextra -g -std=gnu++17 -o CMakeFiles\\imgui.dir\\C_\\Users\\azzed\\source\\repos\\imgui\\imgui_tables.cpp.obj -c C:\\Users\\azzed\\source\\repos\\imgui\\imgui_tables.cpp",
+  "file": "C:/Users/azzed/source/repos/imgui/imgui_tables.cpp",
+  "output": "CMakeFiles/imgui.dir/C_/Users/azzed/source/repos/imgui/imgui_tables.cpp.obj"
+},
+{
+  "directory": "C:/Users/azzed/source/repos/ShaderViewer/build",
+  "command": "C:\\msys64\\mingw64\\bin\\g++.exe  @CMakeFiles/imgui.dir/includes_CXX.rsp  -Wall -Wextra -g -std=gnu++17 -o CMakeFiles\\imgui.dir\\C_\\Users\\azzed\\source\\repos\\imgui\\imgui_widgets.cpp.obj -c C:\\Users\\azzed\\source\\repos\\imgui\\imgui_widgets.cpp",
+  "file": "C:/Users/azzed/source/repos/imgui/imgui_widgets.cpp",
+  "output": "CMakeFiles/imgui.dir/C_/Users/azzed/source/repos/imgui/imgui_widgets.cpp.obj"
+},
+{
+  "directory": "C:/Users/azzed/source/repos/ShaderViewer/build",
+  "command": "C:\\msys64\\mingw64\\bin\\g++.exe  @CMakeFiles/imgui.dir/includes_CXX.rsp  -Wall -Wextra -g -std=gnu++17 -o CMakeFiles\\imgui.dir\\C_\\Users\\azzed\\source\\repos\\imgui\\backends\\imgui_impl_glfw.cpp.obj -c C:\\Users\\azzed\\source\\repos\\imgui\\backends\\imgui_impl_glfw.cpp",
+  "file": "C:/Users/azzed/source/repos/imgui/backends/imgui_impl_glfw.cpp",
+  "output": "CMakeFiles/imgui.dir/C_/Users/azzed/source/repos/imgui/backends/imgui_impl_glfw.cpp.obj"
+},
+{
+  "directory": "C:/Users/azzed/source/repos/ShaderViewer/build",
+  "command": "C:\\msys64\\mingw64\\bin\\g++.exe  @CMakeFiles/imgui.dir/includes_CXX.rsp  -Wall -Wextra -g -std=gnu++17 -o CMakeFiles\\imgui.dir\\C_\\Users\\azzed\\source\\repos\\imgui\\backends\\imgui_impl_opengl3.cpp.obj -c C:\\Users\\azzed\\source\\repos\\imgui\\backends\\imgui_impl_opengl3.cpp",
+  "file": "C:/Users/azzed/source/repos/imgui/backends/imgui_impl_opengl3.cpp",
+  "output": "CMakeFiles/imgui.dir/C_/Users/azzed/source/repos/imgui/backends/imgui_impl_opengl3.cpp.obj"
+},
+{
+  "directory": "C:/Users/azzed/source/repos/ShaderViewer/build",
+  "command": "C:\\msys64\\mingw64\\bin\\g++.exe  @CMakeFiles/ShaderViewer.dir/includes_CXX.rsp  -Wall -Wextra -g -std=gnu++17 -o CMakeFiles\\ShaderViewer.dir\\src\\main.cpp.obj -c C:\\Users\\azzed\\source\\repos\\ShaderViewer\\src\\main.cpp",
+  "file": "C:/Users/azzed/source/repos/ShaderViewer/src/main.cpp",
+  "output": "CMakeFiles/ShaderViewer.dir/src/main.cpp.obj"
+},
+{
+  "directory": "C:/Users/azzed/source/repos/ShaderViewer/build",
+  "command": "C:\\msys64\\mingw64\\bin\\g++.exe  @CMakeFiles/ShaderViewer.dir/includes_CXX.rsp  -Wall -Wextra -g -std=gnu++17 -o CMakeFiles\\ShaderViewer.dir\\src\\TestShader.cpp.obj -c C:\\Users\\azzed\\source\\repos\\ShaderViewer\\src\\TestShader.cpp",
+  "file": "C:/Users/azzed/source/repos/ShaderViewer/src/TestShader.cpp",
+  "output": "CMakeFiles/ShaderViewer.dir/src/TestShader.cpp.obj"
+},
+{
+  "directory": "C:/Users/azzed/source/repos/ShaderViewer/build",
+  "command": "C:\\msys64\\mingw64\\bin\\g++.exe  @CMakeFiles/ShaderViewer.dir/includes_CXX.rsp  -Wall -Wextra -g -std=gnu++17 -o CMakeFiles\\ShaderViewer.dir\\src\\TestObjModel.cpp.obj -c C:\\Users\\azzed\\source\\repos\\ShaderViewer\\src\\TestObjModel.cpp",
+  "file": "C:/Users/azzed/source/repos/ShaderViewer/src/TestObjModel.cpp",
+  "output": "CMakeFiles/ShaderViewer.dir/src/TestObjModel.cpp.obj"
+},
+{
+  "directory": "C:/Users/azzed/source/repos/ShaderViewer/build",
+  "command": "C:\\msys64\\mingw64\\bin\\g++.exe  @CMakeFiles/ShaderViewer.dir/includes_CXX.rsp  -Wall -Wextra -g -std=gnu++17 -o CMakeFiles\\ShaderViewer.dir\\src\\TestCamera.cpp.obj -c C:\\Users\\azzed\\source\\repos\\ShaderViewer\\src\\TestCamera.cpp",
+  "file": "C:/Users/azzed/source/repos/ShaderViewer/src/TestCamera.cpp",
+  "output": "CMakeFiles/ShaderViewer.dir/src/TestCamera.cpp.obj"
+}
+]
