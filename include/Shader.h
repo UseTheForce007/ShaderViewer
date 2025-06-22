@@ -10,4 +10,12 @@ public:
     void use() const;
     void setMat4(const std::string& name, const float* value) const;
     void setFloat(const std::string& name, float value) const;
+    void reload();
+
+private:
+    GLuint m_Program;
+    std::string m_VertexPath;
+    std::string m_FragmentPath;
+    bool compileAndLink(); 
+    
 };

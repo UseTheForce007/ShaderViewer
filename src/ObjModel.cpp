@@ -22,7 +22,7 @@ ObjModel::ObjModel(const std::string& path) {
 
     std::vector<float> vertices;
 
-    // Compute bounding box
+    // Compute bounding box for centering and scaling
     float minX = FLT_MAX, maxX = -FLT_MAX;
     float minY = FLT_MAX, maxY = -FLT_MAX;
     float minZ = FLT_MAX, maxZ = -FLT_MAX;
@@ -42,12 +42,11 @@ ObjModel::ObjModel(const std::string& path) {
     std::cout << "  Y: [" << minY << ", " << maxY << "]\n";
     std::cout << "  Z: [" << minZ << ", " << maxZ << "]\n";
 
-    // Compute midpoint for centering
     float midX = (minX + maxX) * 0.5f;
     float midY = (minY + maxY) * 0.5f;
     float midZ = (minZ + maxZ) * 0.5f;
 
-    const float scale = 0.5f; // try 0.1f, 1.0f, etc.
+    const float scale = 0.5f;
 
     for (const auto& shape : shapes) {
         for (const auto& idx : shape.mesh.indices) {
@@ -55,14 +54,24 @@ ObjModel::ObjModel(const std::string& path) {
             float y = attrib.vertices[3 * idx.vertex_index + 1];
             float z = attrib.vertices[3 * idx.vertex_index + 2];
 
-            // Center and scale
+            float nx = 0, ny = 0, nz = 0;
+            if (idx.normal_index >= 0) {
+                nx = attrib.normals[3 * idx.normal_index + 0];
+                ny = attrib.normals[3 * idx.normal_index + 1];
+                nz = attrib.normals[3 * idx.normal_index + 2];
+            }
+
+            // Interleaved: [position | normal]
             vertices.push_back((x - midX) * scale);
             vertices.push_back((y - midY) * scale);
             vertices.push_back((z - midZ) * scale);
+            vertices.push_back(nx);
+            vertices.push_back(ny);
+            vertices.push_back(nz);
         }
     }
 
-    vertexCount = static_cast<GLsizei>(vertices.size() / 3);
+    vertexCount = static_cast<GLsizei>(vertices.size() / 6);
     std::cout << "Loaded OBJ vertex count: " << vertexCount << std::endl;
 
     glGenVertexArrays(1, &VAO);
@@ -70,8 +79,15 @@ ObjModel::ObjModel(const std::string& path) {
     glBindVertexArray(VAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+
+    // layout(location = 0) -> position
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
+
+    // layout(location = 1) -> normal
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 }

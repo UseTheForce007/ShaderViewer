@@ -41,18 +41,27 @@
 #include "ObjModel.h"   // Loads and draws a 3D .obj model
 #include "Camera.h"     // Provides view and projection matrices
 
+
+bool reloadRequested = false;
+
 // Callback to adjust OpenGL viewport when the window is resized
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
 }
 
-// Poll keyboard input (ESC key to close window)
-void processInput(GLFWwindow* window) {
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) 
+{
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
+
+    if (key == GLFW_KEY_R && action == GLFW_PRESS)
+        reloadRequested = true;
 }
 
 int main() {
+
+    /////////////////////////////////////////////////INITIALIZATION PHASE////////////////////////////////
+
     // Step 1: Initialize GLFW (window + context management)
     if (!glfwInit()) {
         std::cout << "Failed to initialize GLFW" << std::endl;
@@ -83,6 +92,10 @@ int main() {
         return -1;
     }
 
+    //still need to understand this !!!!!
+    glEnable(GL_DEPTH_TEST);
+    //////////////////////////////////////////////////////////////////////////////////////////////////
+    
     // Log the active OpenGL version
     std::cout << "OpenGL version: " << glGetString(GL_VERSION) << std::endl;
 
@@ -92,13 +105,24 @@ int main() {
     ObjModel model("assets/suzanne.obj");                          // Loads a 3D model from .obj file
     Camera camera;                                                 // Camera providing view/projection matrices
 
+    //subscribe to user input for keys
+    glfwSetKeyCallback(window, key_callback);
+
     // Step 6: Main rendering loop
     while (!glfwWindowShouldClose(window)) {
-        processInput(window);  // Check for user input (ESC to exit)
+
+        //Check if Shader reload was requested
+        if (reloadRequested) {
+        shader.reload();
+        std::cout << "Shaders reloaded!" << std::endl;
+        reloadRequested = false;
+        }
 
         // Clear the screen with a dark gray color
         glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        
+        //still need to understand this !!!!!
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Use shader program and set matrices
         shader.use();
