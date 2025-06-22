@@ -143,6 +143,10 @@ int main() {
         shader.setMat4("view", glm::value_ptr(view));
         shader.setMat4("projection", glm::value_ptr(projection));
 
+        //Add time uniform for animation
+        float timeVal = static_cast<float>(glfwGetTime());
+        shader.setFloat("time", timeVal);
+        
         // Draw the 3D model
         model.draw();
 
