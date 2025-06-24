@@ -1,9 +1,9 @@
 /*
 *What is the following:
 *   GLAD? 
-*       Creates the window and OpenGL context. Think: “Where do I draw?”
-*   GLFW?
 *       Loads OpenGL functions into your app. Think: “How do I call OpenGL?”
+*   GLFW?
+*       Creates the window and OpenGL context. Think: “Where do I draw?”
 *   glm?
 *       OpenGL Mathematics Library
 *   OpenGL?
