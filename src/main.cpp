@@ -58,6 +58,14 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         reloadRequested = true;
 }
 
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
+    // Get the camera pointer from the window user pointer
+    Camera* camera = static_cast<Camera*>(glfwGetWindowUserPointer(window));
+    if (camera) {
+        camera->processScroll(static_cast<float>(yoffset));
+    }
+}
+
 int main() {
 
     /////////////////////////////////////////////////INITIALIZATION PHASE////////////////////////////////
@@ -104,6 +112,12 @@ int main() {
     Shader shader("shaders/default.vert", "shaders/default.frag"); // Loads and compiles shaders
     ObjModel model("assets/suzanne.obj");                          // Loads a 3D model from .obj file
     Camera camera;                                                 // Camera providing view/projection matrices
+
+    //Creates a custom pointer to the Camera object which allows us to get it later when scroll_callback is called
+    glfwSetWindowUserPointer(window, &camera);
+
+    //subscribe to user input for scroll wheels
+    glfwSetScrollCallback(window, scroll_callback);
 
     //subscribe to user input for keys
     glfwSetKeyCallback(window, key_callback);
