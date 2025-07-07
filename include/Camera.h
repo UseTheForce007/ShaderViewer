@@ -8,4 +8,6 @@ public:
     glm::mat4 getViewMatrix() const;
     glm::mat4 getProjectionMatrix(float aspect) const;
     glm::vec3 position;
+    void processScroll(float yoffset);
+    float zoom = 45.0f;
 };
