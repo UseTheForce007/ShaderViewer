@@ -42,7 +42,11 @@
 #include "Camera.h"     // Provides view and projection matrices
 
 
-bool reloadRequested = false;
+bool reloadRequested = false;   //Updates to true if R key pressed for reload
+                                //look at key_callback for more
+
+
+// ============================Call Back methods for subscriptions==================================================================
 
 // Callback to adjust OpenGL viewport when the window is resized
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
@@ -66,7 +70,6 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
     }
 }
 
-// Add these callback functions
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods) {
     Camera* camera = static_cast<Camera*>(glfwGetWindowUserPointer(window));
     double xpos, ypos;
@@ -85,9 +88,12 @@ void cursor_position_callback(GLFWwindow* window, double xpos, double ypos) {
         camera->updateDrag(xpos, ypos);
 }
 
+
+//===============================================================================================================================
+
 int main() {
 
-    /////////////////////////////////////////////////INITIALIZATION PHASE////////////////////////////////
+    //===============================================INITIALIZATION PHASE =======================================================
 
     // Step 1: Initialize GLFW (window + context management)
     if (!glfwInit()) {
@@ -121,7 +127,10 @@ int main() {
 
     //still need to understand this !!!!!
     glEnable(GL_DEPTH_TEST);
-    //////////////////////////////////////////////////////////////////////////////////////////////////
+    
+    //=========================================================================================================================    
+    
+    //================================================ Object initialization ==================================================    
     
     // Log the active OpenGL version
     std::cout << "OpenGL version: " << glGetString(GL_VERSION) << std::endl;
@@ -131,6 +140,9 @@ int main() {
     Shader shader("shaders/default.vert", "shaders/default.frag"); // Loads and compiles shaders
     ObjModel model("assets/suzanne.obj");                          // Loads a 3D model from .obj file
     Camera camera;                                                 // Camera providing view/projection matrices
+
+
+    //=============================================== Event Subscription =====================================================
 
     //Creates a custom pointer to the Camera object which allows us to get it later when scroll_callback is called
     glfwSetWindowUserPointer(window, &camera);
@@ -144,8 +156,12 @@ int main() {
     //subscribe to user input for button press
     glfwSetMouseButtonCallback(window, mouse_button_callback);
     
-    //subscribe to user input for ??????????
     glfwSetCursorPosCallback(window, cursor_position_callback);
+
+    //=========================================================================================================================
+
+
+     //=============================================== Render Loop ============================================================
 
     // Step 6: Main rendering loop
     while (!glfwWindowShouldClose(window)) {
@@ -200,6 +216,8 @@ int main() {
         // Poll for window events (input, resize, etc.)
         glfwPollEvents();
     }
+
+    // =========================================================================================================================
 
     // Cleanup and exit
     glfwDestroyWindow(window);
