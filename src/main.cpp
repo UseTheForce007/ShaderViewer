@@ -66,6 +66,25 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
     }
 }
 
+// Add these callback functions
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods) {
+    Camera* camera = static_cast<Camera*>(glfwGetWindowUserPointer(window));
+    double xpos, ypos;
+    glfwGetCursorPos(window, &xpos, &ypos);
+    if (camera) {
+        if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
+            camera->startDrag(xpos, ypos);
+        if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE)
+            camera->endDrag();
+    }
+}
+
+void cursor_position_callback(GLFWwindow* window, double xpos, double ypos) {
+    Camera* camera = static_cast<Camera*>(glfwGetWindowUserPointer(window));
+    if (camera && camera->dragging)
+        camera->updateDrag(xpos, ypos);
+}
+
 int main() {
 
     /////////////////////////////////////////////////INITIALIZATION PHASE////////////////////////////////
@@ -122,6 +141,12 @@ int main() {
     //subscribe to user input for keys
     glfwSetKeyCallback(window, key_callback);
 
+    //subscribe to user input for button press
+    glfwSetMouseButtonCallback(window, mouse_button_callback);
+    
+    //subscribe to user input for ??????????
+    glfwSetCursorPosCallback(window, cursor_position_callback);
+
     // Step 6: Main rendering loop
     while (!glfwWindowShouldClose(window)) {
 
@@ -163,6 +188,11 @@ int main() {
         
         // Draw the 3D model
         model.draw();
+
+        // Monitor camera coordinates in the window title
+        char title[128];
+        snprintf(title, sizeof(title), "ShaderViewer - Camera: (%.2f, %.2f, %.2f)", camera.position.x, camera.position.y, camera.position.z);
+        glfwSetWindowTitle(window, title);
 
         // Swap front and back buffers (double-buffered rendering)
         glfwSwapBuffers(window);
