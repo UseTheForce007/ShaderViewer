@@ -9,7 +9,9 @@
 *   OpenGL?
 *       Handles GPU state, shaders, vertex buffers, etc. Think: “Do the actual drawing.”
 *   
-*
+*   ImGui? : Immediate Mode Graphical User Interface
+*       Gives UI elements that update every fram (dafuq? thats instense).
+*       This is what we'll use to get a window for live editing Shaders
 *    
 *
 *
@@ -35,11 +37,18 @@
 #include <iostream>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <fstream> // For file operations
+#include <vector> // For std::vector
 
 // Project headers
 #include "Shader.h"     // Handles GLSL shader program compilation & usage
 #include "ObjModel.h"   // Loads and draws a 3D .obj model
 #include "Camera.h"     // Provides view and projection matrices
+
+// ImGui headers
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
 
 
 bool reloadRequested = false;   //Updates to true if R key pressed for reload
@@ -160,8 +169,39 @@ int main() {
 
     //=========================================================================================================================
 
+    //================================================ ImGui initialization ==================================================    
+    /*
+    * I tried moving imgui init up to initialization phase but then could no longer control move window with mouse
+    * But If I do that but remove glfwSetWindowUserPointer(window, &camera); it starts working again???
+    *
+    * Chatgpt says:
+    * ImGui installs input callbacks that internally rely on glfwGetWindowUserPointer.
+    * If init set before, ImGui and chained callbacks will receive a null pointer.
+    * Commenting glfwGetWindowUserPointer out entirely "works" only because ImGui handles its own input,
+    * but custom input (e.g., camera drag/scroll) will break without this.
+    * 
+    * */
 
-     //=============================================== Render Loop ============================================================
+    // ImGui initialization
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();                     //All ImGui state (UI style, IO config, fonts, windows, etc.) is stored in this context. You must call this before doing anything else with ImGui.              
+    ImGui::StyleColorsDark();                   //Theme, can try StyleColorsLight() or StyleColorsClassic()
+    ImGui_ImplGlfw_InitForOpenGL(window, true); //This connects ImGui input to GLFW, so it can receive keyboard, mouse, and gamepad input.
+    ImGui_ImplOpenGL3_Init("#version 330");     //This allows ImGui to render with OpenGL 3.3 and ensures its shaders compile properly with your current OpenGL context.
+
+    // Load fragment shader source
+    std::string fragShaderPath = "shaders/default.frag";
+    std::vector<char> fragSourceVec;
+    {
+        std::ifstream fragFile(fragShaderPath);
+        fragSourceVec = std::vector<char>((std::istreambuf_iterator<char>(fragFile)), std::istreambuf_iterator<char>());
+        fragSourceVec.push_back('\0'); // Ensure null-terminated
+    }
+    bool fragChanged = false;
+
+    //=========================================================================================================================
+
+    //=============================================== Render Loop ============================================================
 
     // Step 6: Main rendering loop
     while (!glfwWindowShouldClose(window)) {
@@ -210,6 +250,38 @@ int main() {
         snprintf(title, sizeof(title), "ShaderViewer - Camera: (%.2f, %.2f, %.2f)", camera.position.x, camera.position.y, camera.position.z);
         glfwSetWindowTitle(window, title);
 
+
+
+        // Start ImGui frame
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+
+        // Force position and size for the editor window // if you remove this you can move it around and stuff
+        ImGui::SetNextWindowPos(ImVec2(width * 0.6f, 0), ImGuiCond_Always);   // Snap to right side
+        ImGui::SetNextWindowSize(ImVec2(width * 0.4f, height), ImGuiCond_Always); // Take up 40% width
+
+        // ImGui window for fragment shader editing
+        ImGui::Begin("Fragment Shader Editor");     //Title
+        if (ImGui::InputTextMultiline("##frag", fragSourceVec.data(), fragSourceVec.size(), ImVec2(-FLT_MIN, 400), ImGuiInputTextFlags_AllowTabInput)) 
+        {
+            fragChanged = true;
+        }
+
+        
+        if (ImGui::Button("Save & Reload (R)")) {
+            std::ofstream fragFile(fragShaderPath);
+            fragFile << fragSourceVec.data();
+            fragFile.close();
+            reloadRequested = true;
+            fragChanged = false;
+        }
+        ImGui::End();
+
+        // Render ImGui
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
         // Swap front and back buffers (double-buffered rendering)
         glfwSwapBuffers(window);
 
@@ -219,8 +291,17 @@ int main() {
 
     // =========================================================================================================================
 
+    // ===================================================Clean Up======================================================================
+
+    // ImGui cleanup
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
+
     // Cleanup and exit
     glfwDestroyWindow(window);
     glfwTerminate();
     return 0;
+    
+    // =========================================================================================================================
 }

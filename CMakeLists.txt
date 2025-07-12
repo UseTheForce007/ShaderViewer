@@ -35,6 +35,8 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/external
     ${CMAKE_CURRENT_SOURCE_DIR}/external/tinyobjloader
     C:/msys64/mingw64/include/glm
+    ${CMAKE_CURRENT_SOURCE_DIR}/external/imgui
+    ${CMAKE_CURRENT_SOURCE_DIR}/external/imgui/backends
 )
 
 target_include_directories(glad PRIVATE
@@ -49,17 +51,18 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
 
 # Add ImGui library from ../imgui
 add_library(imgui
-    ../imgui/imgui.cpp
-    ../imgui/imgui_draw.cpp
-    ../imgui/imgui_tables.cpp
-    ../imgui/imgui_widgets.cpp
-    ../imgui/backends/imgui_impl_glfw.cpp
-    ../imgui/backends/imgui_impl_opengl3.cpp
+    external/imgui/imgui.cpp
+    external/imgui/imgui_draw.cpp
+    external/imgui/imgui_tables.cpp
+    external/imgui/imgui_widgets.cpp
+    external/imgui/backends/imgui_impl_glfw.cpp
+    external/imgui/backends/imgui_impl_opengl3.cpp
 )
-target_include_directories(imgui PUBLIC ../imgui ../imgui/backends)
+target_include_directories(imgui PUBLIC external/imgui external/imgui/backends)
+target_link_libraries(imgui PRIVATE glfw3)
 
 # Link ImGui to your application target (replace 'ShaderViewer' with your actual target name if different)
-target_link_libraries(ShaderViewer PRIVATE imgui)
+target_link_libraries(ShaderViewer PRIVATE imgui glfw3 glad OpenGL::GL)
 
 # Copy shaders to build directory
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/shaders DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
