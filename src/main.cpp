@@ -184,10 +184,11 @@ int main() {
 
     // ImGui initialization
     IMGUI_CHECKVERSION();
-    ImGui::CreateContext();                     //All ImGui state (UI style, IO config, fonts, windows, etc.) is stored in this context. You must call this before doing anything else with ImGui.              
-    ImGui::StyleColorsDark();                   //Theme, can try StyleColorsLight() or StyleColorsClassic()
-    ImGui_ImplGlfw_InitForOpenGL(window, true); //This connects ImGui input to GLFW, so it can receive keyboard, mouse, and gamepad input.
-    ImGui_ImplOpenGL3_Init("#version 330");     //This allows ImGui to render with OpenGL 3.3 and ensures its shaders compile properly with your current OpenGL context.
+    ImGui::CreateContext();                         //All ImGui state (UI style, IO config, fonts, windows, etc.) is stored in this context. You must call this before doing anything else with ImGui.              
+    ImGui::StyleColorsDark();                       //Theme, can try StyleColorsLight() or StyleColorsClassic()
+    ImGui_ImplGlfw_InitForOpenGL(window, true);     //This connects ImGui input to GLFW, so it can receive keyboard, mouse, and gamepad input.
+    ImGui_ImplOpenGL3_Init("#version 330");         //This allows ImGui to render with OpenGL 3.3 and ensures its shaders compile properly with your current OpenGL context.
+    ImGui::GetIO().IniFilename = "build/imgui.ini"; // Set ImGui ini filename
 
     // Load fragment shader source
     std::string fragShaderPath = "shaders/default.frag";
