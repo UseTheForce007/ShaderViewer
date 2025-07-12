@@ -111,7 +111,7 @@ int main() {
     }
 
     // Step 2: Create a windowed mode window and OpenGL context
-    GLFWwindow* window = glfwCreateWindow(800, 600, "ShaderViewer Test", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(1200, 800, "ShaderViewer Test", NULL, NULL);
     if (!window) {
         std::cout << "Failed to create GLFW window" << std::endl;
         glfwTerminate();
