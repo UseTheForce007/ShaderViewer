@@ -59,6 +59,7 @@ bool reloadRequested = false;   //Updates to true if R key pressed for reload
 
 // Callback to adjust OpenGL viewport when the window is resized
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
+    //tells OpenGL what part of the window you want to render to.
     glViewport(0, 0, width, height);
 }
 
@@ -134,7 +135,9 @@ int main() {
         return -1;
     }
 
-    //still need to understand this !!!!!
+    //This enables depth perception
+    //Specifically helps gl figure out overlaps on geometry
+    //so it will make the object face in front will be rendered while face in the back will not be unless object is flipped
     glEnable(GL_DEPTH_TEST);
     
     //=========================================================================================================================    
