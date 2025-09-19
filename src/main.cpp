@@ -10,7 +10,9 @@
  *       Handles GPU state, shaders, vertex buffers, etc. Think: “Do the actual
  *drawing.”
  *
- *
+ *   ImGui? : Immediate Mode Graphical User Interface
+ *       Gives UI elements that update every fram (dafuq? thats instense).
+ *       This is what we'll use to get a window for live editing Shaders
  *
  *
  *
@@ -34,19 +36,31 @@
 #include <glad/gl.h>
 
 // Standard libraries for I/O and math
+#include <fstream> // For file operations
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
+#include <vector> // For std::vector
 
 // Project headers
 #include "Camera.h"   // Provides view and projection matrices
 #include "ObjModel.h" // Loads and draws a 3D .obj model
 #include "Shader.h"   // Handles GLSL shader program compilation & usage
 
-bool reloadRequested = false;
+// ImGui headers
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
+
+bool reloadRequested = false; // Updates to true if R key pressed for reload
+                              // look at key_callback for more
+
+// ============================Call Back methods for
+// subscriptions==================================================================
 
 // Callback to adjust OpenGL viewport when the window is resized
 void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
+  // tells OpenGL what part of the window you want to render to.
   glViewport(0, 0, width, height);
 }
 
@@ -59,10 +73,39 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action,
     reloadRequested = true;
 }
 
+void scroll_callback(GLFWwindow *window, double xoffset, double yoffset) {
+  // Get the camera pointer from the window user pointer
+  Camera *camera = static_cast<Camera *>(glfwGetWindowUserPointer(window));
+  if (camera) {
+    camera->processScroll(static_cast<float>(yoffset));
+  }
+}
+
+void mouse_button_callback(GLFWwindow *window, int button, int action,
+                           int mods) {
+  Camera *camera = static_cast<Camera *>(glfwGetWindowUserPointer(window));
+  double xpos, ypos;
+  glfwGetCursorPos(window, &xpos, &ypos);
+  if (camera) {
+    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
+      camera->startDrag(xpos, ypos);
+    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE)
+      camera->endDrag();
+  }
+}
+
+void cursor_position_callback(GLFWwindow *window, double xpos, double ypos) {
+  Camera *camera = static_cast<Camera *>(glfwGetWindowUserPointer(window));
+  if (camera && camera->dragging)
+    camera->updateDrag(xpos, ypos);
+}
+
+//===============================================================================================================================
+
 int main() {
 
-  /////////////////////////////////////////////////INITIALIZATION
-  /// PHASE////////////////////////////////
+  //===============================================INITIALIZATION PHASE
+  //=======================================================
 
   // Step 1: Initialize GLFW (window + context management)
   if (!glfwInit()) {
@@ -95,9 +138,16 @@ int main() {
     return -1;
   }
 
-  // still need to understand this !!!!!
+  // This enables depth perception
+  // Specifically helps gl figure out overlaps on geometry
+  // so it will make the object face in front will be rendered while face in the
+  // back will not be unless object is flipped
   glEnable(GL_DEPTH_TEST);
-  //////////////////////////////////////////////////////////////////////////////////////////////////
+
+  //=========================================================================================================================
+
+  //================================================ Object initialization
+  //==================================================
 
   // Log the active OpenGL version
   std::cout << "OpenGL version: " << glGetString(GL_VERSION) << std::endl;
@@ -109,8 +159,74 @@ int main() {
   ObjModel model("assets/suzanne.obj");  // Loads a 3D model from .obj file
   Camera camera; // Camera providing view/projection matrices
 
+  //=============================================== Event Subscription
+  //=====================================================
+
+  // Creates a custom pointer to the Camera object which allows us to get it
+  // later when scroll_callback is called
+  glfwSetWindowUserPointer(window, &camera);
+
+  // subscribe to user input for scroll wheels
+  glfwSetScrollCallback(window, scroll_callback);
+
   // subscribe to user input for keys
   glfwSetKeyCallback(window, key_callback);
+
+  // subscribe to user input for button press
+  glfwSetMouseButtonCallback(window, mouse_button_callback);
+
+  glfwSetCursorPosCallback(window, cursor_position_callback);
+
+  //=========================================================================================================================
+
+  //================================================ ImGui initialization
+  //==================================================
+  /*
+   * I tried moving imgui init up to initialization phase but then could no
+   * longer control move window with mouse But If I do that but remove
+   * glfwSetWindowUserPointer(window, &camera); it starts working again???
+   *
+   * Chatgpt says:
+   * ImGui installs input callbacks that internally rely on
+   * glfwGetWindowUserPointer. If init set before, ImGui and chained callbacks
+   * will receive a null pointer. Commenting glfwGetWindowUserPointer out
+   * entirely "works" only because ImGui handles its own input, but custom input
+   * (e.g., camera drag/scroll) will break without this.
+   *
+   * */
+
+  // ImGui initialization
+  IMGUI_CHECKVERSION();
+  ImGui::CreateContext(); // All ImGui state (UI style, IO config, fonts,
+                          // windows, etc.) is stored in this context. You must
+                          // call this before doing anything else with ImGui.
+  ImGui::StyleColorsDark(); // Theme, can try StyleColorsLight() or
+                            // StyleColorsClassic()
+  ImGui_ImplGlfw_InitForOpenGL(
+      window, true); // This connects ImGui input to GLFW, so it can receive
+                     // keyboard, mouse, and gamepad input.
+  ImGui_ImplOpenGL3_Init(
+      "#version 330"); // This allows ImGui to render with OpenGL 3.3 and
+                       // ensures its shaders compile properly with your current
+                       // OpenGL context.
+  ImGui::GetIO().IniFilename = "build/imgui.ini"; // Set ImGui ini filename
+
+  // Load fragment shader source
+  std::string fragShaderPath = "shaders/default.frag";
+  std::vector<char> fragSourceVec;
+  {
+    std::ifstream fragFile(fragShaderPath);
+    fragSourceVec =
+        std::vector<char>((std::istreambuf_iterator<char>(fragFile)),
+                          std::istreambuf_iterator<char>());
+    fragSourceVec.push_back('\0'); // Ensure null-terminated
+  }
+  bool fragChanged = false;
+
+  //=========================================================================================================================
+
+  //=============================================== Render Loop
+  //============================================================
 
   // Step 6: Main rendering loop
   while (!glfwWindowShouldClose(window)) {
@@ -134,62 +250,86 @@ int main() {
     // Identity model matrix (no transformations yet)
     glm::mat4 modelMat = glm::mat4(1.0f);
 
-    // still need to understand this !!!!!
-    glEnable(GL_DEPTH_TEST);
-    //////////////////////////////////////////////////////////////////////////////////////////////////
+    // Get view matrix from camera (defines camera position/direction)
+    glm::mat4 view = camera.getViewMatrix();
 
-    // Step 6: Main rendering loop
-    while (!glfwWindowShouldClose(window)) {
+    // Calculate projection matrix based on window aspect ratio
+    int width, height;
+    glfwGetFramebufferSize(window, &width, &height);
+    glm::mat4 projection = camera.getProjectionMatrix(width / (float)height);
 
-      // Check if Shader reload was requested
-      if (reloadRequested) {
-        shader.reload();
-        std::cout << "Shaders reloaded!" << std::endl;
-        reloadRequested = false;
-      }
+    // Send matrices to the shader
+    shader.setMat4("model", glm::value_ptr(modelMat));
+    shader.setMat4("view", glm::value_ptr(view));
+    shader.setMat4("projection", glm::value_ptr(projection));
 
-      // Clear the screen with a dark gray color
-      glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
+    // Add time uniform for animation
+    float timeVal = static_cast<float>(glfwGetTime());
+    shader.setFloat("time", timeVal);
 
-      // still need to understand this !!!!!
-      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    // Draw the 3D model
+    model.draw();
 
-      // Use shader program and set matrices
-      shader.use();
+    // Monitor camera coordinates in the window title
+    char title[128];
+    snprintf(title, sizeof(title), "ShaderViewer - Camera: (%.2f, %.2f, %.2f)",
+             camera.position.x, camera.position.y, camera.position.z);
+    glfwSetWindowTitle(window, title);
 
-      // Identity model matrix (no transformations yet)
-      glm::mat4 modelMat = glm::mat4(1.0f);
+    // Start ImGui frame
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
 
-      // Get view matrix from camera (defines camera position/direction)
-      glm::mat4 view = camera.getViewMatrix();
+    // Force position and size for the editor window // if you remove this you
+    // can move it around and stuff
+    ImGui::SetNextWindowPos(ImVec2(width * 0.6f, 0),
+                            ImGuiCond_Always); // Snap to right side
+    ImGui::SetNextWindowSize(ImVec2(width * 0.4f, height),
+                             ImGuiCond_Always); // Take up 40% width
 
-      // Calculate projection matrix based on window aspect ratio
-      int width, height;
-      glfwGetFramebufferSize(window, &width, &height);
-      glm::mat4 projection = camera.getProjectionMatrix(width / (float)height);
-
-      // Send matrices to the shader
-      shader.setMat4("model", glm::value_ptr(modelMat));
-      shader.setMat4("view", glm::value_ptr(view));
-      shader.setMat4("projection", glm::value_ptr(projection));
-
-      // Add time uniform for animation
-      float timeValue = static_cast<float>(glfwGetTime());
-      shader.setFloat("time", timeValue);
-
-      // Draw the 3D model
-      model.draw();
-
-      // Swap front and back buffers (double-buffered rendering)
-      glfwSwapBuffers(window);
-
-      // Poll for window events (input, resize, etc.)
-      glfwPollEvents();
+    // ImGui window for fragment shader editing
+    ImGui::Begin("Fragment Shader Editor"); // Title
+    if (ImGui::InputTextMultiline("##frag", fragSourceVec.data(),
+                                  fragSourceVec.size(), ImVec2(-FLT_MIN, 400),
+                                  ImGuiInputTextFlags_AllowTabInput)) {
+      fragChanged = true;
     }
+
+    if (ImGui::Button("Save & Reload (R)")) {
+      std::ofstream fragFile(fragShaderPath);
+      fragFile << fragSourceVec.data();
+      fragFile.close();
+      reloadRequested = true;
+      fragChanged = false;
+    }
+    ImGui::End();
+
+    // Render ImGui
+    ImGui::Render();
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+    // Swap front and back buffers (double-buffered rendering)
+    glfwSwapBuffers(window);
+
+    // Poll for window events (input, resize, etc.)
+    glfwPollEvents();
   }
+
+  // =========================================================================================================================
+
+  // ===================================================Clean
+  // Up======================================================================
+
+  // ImGui cleanup
+  ImGui_ImplOpenGL3_Shutdown();
+  ImGui_ImplGlfw_Shutdown();
+  ImGui::DestroyContext();
 
   // Cleanup and exit
   glfwDestroyWindow(window);
   glfwTerminate();
   return 0;
+
+  // =========================================================================================================================
 }
