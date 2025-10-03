@@ -66,5 +66,8 @@ endif()
 # Configure ImGui
 configure_imgui(${PROJECT_NAME})
 
+# Configure Eigen
+configure_eigen(${PROJECT_NAME})
+
 # Copy resources
 copy_resources()

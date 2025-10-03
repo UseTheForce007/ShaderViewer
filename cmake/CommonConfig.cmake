@@ -57,3 +57,34 @@ function(copy_resources)
         file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/external/tinyobjloader DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
     endif()
 endfunction()
+
+# Configure Eigen (header-only) - prefer system package, fallback to bundled submodule
+function(configure_eigen target_name)
+    # Try to find a system-provided Eigen3 with a CMake config package first
+    find_package(Eigen3 QUIET CONFIG)
+
+    if(Eigen3_FOUND)
+        target_link_libraries(${target_name} PRIVATE Eigen3::Eigen)
+        message(STATUS "Eigen3 found (CONFIG): using Eigen3::Eigen target")
+        return()
+    endif()
+
+    # Fallback to the FindEigen3.cmake module if available on the system
+    find_package(Eigen3 QUIET)
+
+    if(Eigen3_FOUND)
+        target_link_libraries(${target_name} PRIVATE Eigen3::Eigen)
+        message(STATUS "Eigen3 found (MODULE): using Eigen3::Eigen target")
+        return()
+    endif()
+
+    # Final fallback: use the bundled headers from the submodule
+    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/external/eigen/Eigen/Core")
+        target_include_directories(${target_name} PRIVATE
+            ${CMAKE_CURRENT_SOURCE_DIR}/external/eigen
+        )
+        message(STATUS "Eigen3 not found on system; using bundled headers at external/eigen")
+    else()
+        message(WARNING "Eigen3 not found. Install Eigen3 or initialize the submodule at external/eigen.")
+    endif()
+endfunction()

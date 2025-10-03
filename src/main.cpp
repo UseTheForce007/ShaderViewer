@@ -52,6 +52,8 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 
+#include <Eigen/Dense>
+
 bool reloadRequested = false; // Updates to true if R key pressed for reload
                               // look at key_callback for more
 
